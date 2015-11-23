@@ -11,6 +11,7 @@ import com.squareup.okhttp.RequestBody;
 
 import zebpay.dhruvil.com.zebpaydemo.models.ActivityFeedPojo;
 import zebpay.dhruvil.com.zebpaydemo.utils.CustomHttpClient;
+import zebpay.dhruvil.com.zebpaydemo.utils.RecyclerViewHeader;
 
 public class MainActivity extends AppCompatActivity {
     private RecyclerView recyclerViewFeeds;
@@ -22,7 +23,9 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         recyclerViewFeeds = (RecyclerView) findViewById(R.id.recyclerViewfeeds);
         recyclerViewFeeds.setLayoutManager(new LinearLayoutManager(MainActivity.this));
+        RecyclerViewHeader header = RecyclerViewHeader.fromXml(MainActivity.this, R.layout.header);
 
+        header.attachTo(recyclerViewFeeds);
         new gethomefeed().execute();
 
     }

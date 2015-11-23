@@ -1,6 +1,7 @@
 package zebpay.dhruvil.com.zebpaydemo;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,6 +11,8 @@ import android.widget.TextView;
 
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
+import com.nostra13.universalimageloader.core.assist.FailReason;
+import com.nostra13.universalimageloader.core.listener.ImageLoadingListener;
 
 import java.util.List;
 
@@ -34,7 +37,7 @@ public class ActivityFeedAdapter extends RecyclerView.Adapter<ActivityFeedAdapte
                 .showImageOnLoading(R.drawable.circle_blue)
                 .showImageForEmptyUri(R.drawable.circle_blue)
 
-                .showImageOnFail(R.drawable.circle_blue).cacheInMemory(true)
+                .showImageOnFail(R.drawable.circle_blue).cacheInMemory(true).cacheOnDisk(true)
                 .considerExifParams(true).build();
         imageLoader = ApplicationClass.getInstance().getimageloader();
     }
@@ -62,10 +65,31 @@ public class ActivityFeedAdapter extends RecyclerView.Adapter<ActivityFeedAdapte
             holder.resImagetext.setVisibility(View.VISIBLE);
             holder.resImagetext.setText(entity.getTitle().substring(0, 1));
             holder.imv.setImageResource(R.drawable.circle_blue);
+
         } else {
             holder.resImagetext.setText("");
             holder.resImagetext.setVisibility(View.GONE);
-            imageLoader.displayImage(entity.getSourceImageUrl(), holder.imv, options);
+            imageLoader.displayImage(entity.getSourceImageUrl(), holder.imv, options, new ImageLoadingListener() {
+                @Override
+                public void onLoadingStarted(String s, View view) {
+                    holder.imv.setImageResource(R.drawable.circle_blue);
+                }
+
+                @Override
+                public void onLoadingFailed(String s, View view, FailReason failReason) {
+                    holder.imv.setImageResource(R.drawable.circle_blue);
+                }
+
+                @Override
+                public void onLoadingComplete(String s, View view, Bitmap bitmap) {
+                    holder.resImagetext.setVisibility(View.GONE);
+                }
+
+                @Override
+                public void onLoadingCancelled(String s, View view) {
+                    holder.imv.setImageResource(R.drawable.circle_blue);
+                }
+            });
         }
     }
 
