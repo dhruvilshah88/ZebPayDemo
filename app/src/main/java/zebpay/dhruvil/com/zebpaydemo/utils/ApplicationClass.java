@@ -1,15 +1,14 @@
 package zebpay.dhruvil.com.zebpaydemo.utils;
 
-import android.app.Application;
-
 import com.nostra13.universalimageloader.cache.memory.impl.LruMemoryCache;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
+import com.orm.SugarApp;
 
 /**
  * Created by dhruvil on 23/11/15.
  */
-public class ApplicationClass extends Application {
+public class ApplicationClass extends SugarApp {
     private ImageLoader loader;
     private static ApplicationClass mInstance;
 

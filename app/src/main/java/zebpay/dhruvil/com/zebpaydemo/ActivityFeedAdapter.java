@@ -72,12 +72,10 @@ public class ActivityFeedAdapter extends RecyclerView.Adapter<ActivityFeedAdapte
             imageLoader.displayImage(entity.getSourceImageUrl(), holder.imv, options, new ImageLoadingListener() {
                 @Override
                 public void onLoadingStarted(String s, View view) {
-                    holder.imv.setImageResource(R.drawable.circle_blue);
                 }
 
                 @Override
                 public void onLoadingFailed(String s, View view, FailReason failReason) {
-                    holder.imv.setImageResource(R.drawable.circle_blue);
                 }
 
                 @Override
@@ -87,7 +85,6 @@ public class ActivityFeedAdapter extends RecyclerView.Adapter<ActivityFeedAdapte
 
                 @Override
                 public void onLoadingCancelled(String s, View view) {
-                    holder.imv.setImageResource(R.drawable.circle_blue);
                 }
             });
         }
