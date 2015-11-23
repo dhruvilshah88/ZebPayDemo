@@ -36,7 +36,6 @@ public class ActivityFeedAdapter extends RecyclerView.Adapter<ActivityFeedAdapte
         options = new DisplayImageOptions.Builder()
                 .showImageOnLoading(R.drawable.circle_blue)
                 .showImageForEmptyUri(R.drawable.circle_blue)
-
                 .showImageOnFail(R.drawable.circle_blue).cacheInMemory(true).cacheOnDisk(true)
                 .considerExifParams(true).build();
         imageLoader = ApplicationClass.getInstance().getimageloader();

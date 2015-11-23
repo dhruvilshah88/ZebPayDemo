@@ -6,6 +6,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.widget.TextView;
 
 import com.google.gson.Gson;
 import com.squareup.okhttp.RequestBody;
@@ -18,6 +19,7 @@ import zebpay.dhruvil.com.zebpaydemo.utils.RecyclerViewHeader;
 public class MainActivity extends AppCompatActivity {
     private RecyclerView recyclerViewFeeds;
     private ActivityFeedAdapter adapter;
+    private TextView tvbuy, tvsell;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,6 +30,8 @@ public class MainActivity extends AppCompatActivity {
         RecyclerViewHeader header = RecyclerViewHeader.fromXml(MainActivity.this, R.layout.header);
 
         header.attachTo(recyclerViewFeeds);
+        tvbuy = (TextView) header.findViewById(R.id.tvbuy);
+        tvsell = (TextView) header.findViewById(R.id.tvsell);
         new gethomefeed().execute();
         new getticker().execute();
     }
@@ -105,7 +109,11 @@ public class MainActivity extends AppCompatActivity {
 
                     Gson gson = new Gson();
                     TickerModel ticker = gson.fromJson(s, TickerModel.class);
+
+
                     ticker.save();
+                    tvbuy.setText(ticker.getBuy() + " ₹");
+                    tvsell.setText(ticker.getSell() + " ₹");
                     Log.w("time", ticker.getCtime() + ";");
                 } catch (Exception e) {
                     e.printStackTrace();
