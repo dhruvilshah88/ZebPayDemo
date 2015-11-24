@@ -1,13 +1,14 @@
 package zebpay.dhruvil.com.zebpaydemo;
 
 import android.app.Activity;
-import android.graphics.Color;
 import android.graphics.Paint.Align;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.LinearLayout;
+
+import com.orm.SugarRecord;
 
 import org.achartengine.ChartFactory;
 import org.achartengine.chart.PointStyle;
@@ -64,7 +65,7 @@ public class analytics extends Activity {
 
     private void openChart() {
         TickerModel ticker = new TickerModel();
-        List<TickerModel> tickers = ticker.findWithQuery(TickerModel.class, "Select * from " + ticker.getTableName(TickerModel.class) + " GROUP BY buy ORDER BY ctime DESC ");//, (System.currentTimeMillis() - 720000) + "");
+        List<TickerModel> tickers = SugarRecord.findWithQuery(TickerModel.class, "Select * from " + SugarRecord.getTableName(TickerModel.class) + " GROUP BY buy ORDER BY ctime DESC ");//, (System.currentTimeMillis() - 720000) + "");
         int[] bitrates = new int[tickers.size()];
         timeprice = new String[tickers.size()];
         for (int j = 0; j < tickers.size(); j++) {
@@ -117,6 +118,7 @@ public class analytics extends Activity {
          */
         // setting text size of the title
         multiRenderer.setChartTitleTextSize(28);
+
         // setting text size of the axis title
         multiRenderer.setAxisTitleTextSize(24);
         // setting text size of the graph lable
@@ -160,9 +162,9 @@ public class analytics extends Activity {
         // setting no of values to display in y axis
         multiRenderer.setYLabels(0);
 
-        multiRenderer.setYAxisMax((maxy + 10) );
+        multiRenderer.setYAxisMax((maxy + 10));
 
-        multiRenderer.setYAxisMin((miny-10));
+        multiRenderer.setYAxisMin((miny - 10));
         // setting used to move the graph on xaxiz to .5 to the right
         // setting bar size or space between two bars
         // multiRenderer.setBarSpacing(0.5);
