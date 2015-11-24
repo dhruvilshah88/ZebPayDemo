@@ -60,6 +60,7 @@ public class MainActivity extends AppCompatActivity {
                         .setPeriodic(60000L)
                         .setRequiredNetworkType(JobRequest.NetworkType.CONNECTED)
                         .setPersisted(true)
+
                         .build()
                         .schedule();
             }
