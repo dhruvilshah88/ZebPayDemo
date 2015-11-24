@@ -15,6 +15,7 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.google.gson.Gson;
+import com.orm.SugarRecord;
 import com.squareup.okhttp.RequestBody;
 
 import java.text.DateFormat;
@@ -29,11 +30,11 @@ import zebpay.dhruvil.com.zebpaydemo.utils.CustomHttpClient;
 import zebpay.dhruvil.com.zebpaydemo.utils.RecyclerViewHeader;
 
 public class MainActivity extends AppCompatActivity {
+    RecyclerViewHeader header;
+    List<ActivityFeedPojo.ActivityFeedEntity> feeds;
     private RecyclerView recyclerViewFeeds;
     private ActivityFeedAdapter adapter;
     private TextView tvbuy, tvsell;
-    RecyclerViewHeader header;
-    List<ActivityFeedPojo.ActivityFeedEntity> feeds;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -92,9 +93,33 @@ public class MainActivity extends AppCompatActivity {
                 new gethomefeed().execute();
                 new getticker().execute();
                 break;
+
+            case R.id.settings:
+
+                startActivity(new Intent(MainActivity.this, Settings.class));
+                break;
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    void getdifference() {
+        long timenow = System.currentTimeMillis();
+        long interval = 600000;
+        TickerModel ticker = new TickerModel();
+        List<TickerModel> tickers = SugarRecord.findWithQuery(TickerModel.class, "Select max(buy), buy,sell from " + SugarRecord.getTableName(TickerModel.class) + " where ctime - " + timenow + "  <= ?", interval + "");
+        TickerModel maxmbuy = tickers.get(0);
+        Gson gson = new Gson();
+        Log.w("fields", " firlds=" + gson.toJson(maxmbuy) + " ..." + tickers.size());
+
+        tickers = SugarRecord.findWithQuery(TickerModel.class, "Select min(buy), buy,sell from " + SugarRecord.getTableName(TickerModel.class) + " where ctime - " + timenow + "  <= ?", "600000");
+        TickerModel minbuy = tickers.get(0);
+        Date date = new Date(minbuy.getCtime());
+        DateFormat formatter = new SimpleDateFormat("HH:mm:ss:SSS");
+        String dateFormatted = formatter.format(date);
+
+        Log.w("fields", "time:" + dateFormatted + " diff=" + (maxmbuy.getBuy() - minbuy.getBuy()) + " ..." + tickers.size());
+
     }
 
     class gethomefeed extends AsyncTask<RequestBody, Void, String> {
@@ -145,7 +170,6 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-
     class getticker extends AsyncTask<String, Void, String> {
         @Override
         protected void onPreExecute() {
@@ -178,23 +202,7 @@ public class MainActivity extends AppCompatActivity {
                     tvbuy.setText(ticker.getBuy() + " ₹");
                     tvsell.setText(ticker.getSell() + " ₹");
                     Log.w("time", ticker.getCtime() + ";");
-
                     ticker.save();
-                    long timenow = System.currentTimeMillis();
-                    long interval = 600000;
-                    List<TickerModel> tickers = ticker.findWithQuery(TickerModel.class, "Select max(buy), buy,sell from " + ticker.getTableName(TickerModel.class) + " where ctime - " + timenow + "  <= ?", interval + "");
-                    TickerModel maxmbuy = tickers.get(0);
-                    Log.w("fields", " firlds=" + gson.toJson(maxmbuy) + " ..." + tickers.size());
-
-                    tickers = ticker.findWithQuery(TickerModel.class, "Select min(buy), buy,sell from " + ticker.getTableName(TickerModel.class) + " where ctime - " + timenow + "  <= ?", "600000");
-                    TickerModel minbuy = tickers.get(0);
-                    Date date = new Date(minbuy.getCtime());
-                    DateFormat formatter = new SimpleDateFormat("HH:mm:ss:SSS");
-                    String dateFormatted = formatter.format(date);
-
-                    Log.w("fields", "time:" + dateFormatted + " diff=" + (maxmbuy.getBuy() - minbuy.getBuy()) + " ..." + tickers.size());
-
-
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
