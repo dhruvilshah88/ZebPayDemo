@@ -72,7 +72,7 @@ public class analytics extends Activity {
             timeprice[j] = getformateddate(tickers.get(j).getCtime());
         }
         int maxy = findmax(bitrates);
-
+        int miny = findmin(bitrates);
         // Creating an XYSeries for bitrates
         XYSeries bitratesSeries = new XYSeries("Rates Latest");
         // Creating an XYSeries for Expense
@@ -93,7 +93,7 @@ public class analytics extends Activity {
         bitratesRenderer.setColor(R.color.colorPrimary); // color of the graph
 
         bitratesRenderer.setFillPoints(true);
-        bitratesRenderer.setLineWidth(2f);
+        bitratesRenderer.setLineWidth(3f);
         bitratesRenderer.setDisplayChartValues(true);
         // setting chart value distance
         bitratesRenderer.setDisplayChartValuesDistance(10);
@@ -102,7 +102,6 @@ public class analytics extends Activity {
         // setting stroke of the line chart to solid
         bitratesRenderer.setStroke(BasicStroke.SOLID);
         bitratesRenderer.setChartValuesTextSize(20);
-        // Creating XYSeriesRenderer to customize expenseSeries
         bitratesRenderer.setDisplayChartValuesDistance(10);
         // setting line graph point style to circle
 
@@ -121,11 +120,11 @@ public class analytics extends Activity {
         // setting text size of the axis title
         multiRenderer.setAxisTitleTextSize(24);
         // setting text size of the graph lable
-        multiRenderer.setLabelsTextSize(24);
+        multiRenderer.setLabelsTextSize(18);
         // setting zoom buttons visiblity
         multiRenderer.setZoomButtonsVisible(true);
         // setting pan enablity which uses graph to move on both axis
-        multiRenderer.setPanEnabled(false, false);
+        multiRenderer.setPanEnabled(true, true);
         // setting click false on graph
         multiRenderer.setClickEnabled(false);
         // setting zoom to false on both axis
@@ -145,6 +144,7 @@ public class analytics extends Activity {
         // setting displaying lines on graph to be formatted(like using
         // graphics)
         multiRenderer.setAntialiasing(true);
+        multiRenderer.setXLabelsAngle(45);
 
         // setting to in scroll to false
         multiRenderer.setInScroll(true);
@@ -160,25 +160,20 @@ public class analytics extends Activity {
         // setting no of values to display in y axis
         multiRenderer.setYLabels(0);
 
-        // setting y axis max value, Since i'm using static values inside the
-        // graph so i'm setting y max value to 4000.
-        // if you use dynamic values then get the max y value and set here
-        multiRenderer.setYAxisMax((maxy + 10) * 2);
+        multiRenderer.setYAxisMax((maxy + 10) );
 
-        multiRenderer.setYAxisMin(0);
+        multiRenderer.setYAxisMin((miny-10));
         // setting used to move the graph on xaxiz to .5 to the right
-        multiRenderer.setXAxisMin(-0.5);
-        // setting used to move the graph on xaxiz to .5 to the right
-        multiRenderer.setXAxisMax(6);
         // setting bar size or space between two bars
         // multiRenderer.setBarSpacing(0.5);
         // Setting background color of the graph to transparent
-        multiRenderer.setBackgroundColor(Color.TRANSPARENT);
+        multiRenderer.setBackgroundColor(getResources().getColor(
+                R.color.fab_white));
         // Setting margin color of the graph to transparent
         multiRenderer.setMarginsColor(getResources().getColor(
-                R.color.transparent));
+                R.color.colorPrimary));
         multiRenderer.setApplyBackgroundColor(true);
-        multiRenderer.setScale(2f);
+        multiRenderer.setScale(1f);
         // setting x axis point size
         multiRenderer.setPointSize(4f);
         // setting the margin size for the graph in the order top, left, bottom,
@@ -216,6 +211,18 @@ public class analytics extends Activity {
         }
 
         return max;
+
+    }
+
+    int findmin(int[] array) {
+        int min = array[0];
+        for (int i = 0; i < array.length; i++) {
+            if (array[i] < min) {
+                min = array[i];
+            }
+        }
+
+        return min;
 
     }
 

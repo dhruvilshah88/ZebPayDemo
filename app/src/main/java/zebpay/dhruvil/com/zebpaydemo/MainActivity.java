@@ -1,5 +1,6 @@
 package zebpay.dhruvil.com.zebpaydemo;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -7,6 +8,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
@@ -15,6 +19,7 @@ import com.squareup.okhttp.RequestBody;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -27,6 +32,8 @@ public class MainActivity extends AppCompatActivity {
     private RecyclerView recyclerViewFeeds;
     private ActivityFeedAdapter adapter;
     private TextView tvbuy, tvsell;
+    RecyclerViewHeader header;
+    List<ActivityFeedPojo.ActivityFeedEntity> feeds;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,8 +41,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         recyclerViewFeeds = (RecyclerView) findViewById(R.id.recyclerViewfeeds);
         recyclerViewFeeds.setLayoutManager(new LinearLayoutManager(MainActivity.this));
-        RecyclerViewHeader header = RecyclerViewHeader.fromXml(MainActivity.this, R.layout.header);
-
+        header = RecyclerViewHeader.fromXml(MainActivity.this, R.layout.header);
         header.attachTo(recyclerViewFeeds);
         header.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -44,16 +50,61 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(new Intent(MainActivity.this, analytics.class));
             }
         });
+
         tvbuy = (TextView) header.findViewById(R.id.tvbuy);
         tvsell = (TextView) header.findViewById(R.id.tvsell);
+        feeds = new ArrayList<>();
+        adapter = new ActivityFeedAdapter(MainActivity.this, feeds);
+        recyclerViewFeeds.setAdapter(adapter);
+
         new gethomefeed().execute();
         new getticker().execute();
     }
 
+    void refresh() {
+        header.attachTo(recyclerViewFeeds);
+        header.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                startActivity(new Intent(MainActivity.this, analytics.class));
+            }
+        });
+        new gethomefeed().execute();
+        new getticker().execute();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.main, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+
+        switch (id) {
+            case R.id.refresh:
+                Log.w("main", "refresh");
+
+                new gethomefeed().execute();
+                new getticker().execute();
+                break;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
     class gethomefeed extends AsyncTask<RequestBody, Void, String> {
+        ProgressDialog pd;
+
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
+            pd = ProgressDialog.show(MainActivity.this, "", "Please Wait", true, false);
+            pd.show();
         }
 
         @Override
@@ -71,17 +122,18 @@ public class MainActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(String s) {
             super.onPostExecute(s);
-
+            if (pd != null)
+                pd.dismiss();
             if (s.equals("error") || s == null) {
 
             } else {
                 try {
                     Gson gson = new Gson();
-                    ActivityFeedPojo feeds = gson.fromJson(s, ActivityFeedPojo.class);
-                    if (feeds.getReturncode().equals("1")) {
-                        adapter = new ActivityFeedAdapter(MainActivity.this, feeds.getActivityFeed());
-                        recyclerViewFeeds.setAdapter(adapter);
+                    ActivityFeedPojo feedspojo = gson.fromJson(s, ActivityFeedPojo.class);
+                    if (feedspojo.getReturncode().equals("1")) {
+                        feeds = feedspojo.getActivityFeed();
 
+                        adapter.setdata(feeds);
                     } else {
 
                     }

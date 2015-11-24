@@ -2,15 +2,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#f6f6f6">
+    android:background="@color/counter_text_color">
 
-    <Button
-        android:id="@+id/btn_chart"
-        android:layout_width="wrap_content"
-        android:layout_height="0dp"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        android:text="Draw chart" />
 
     <LinearLayout
         android:id="@+id/chart"
@@ -18,8 +11,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_alignParentLeft="true"
-        android:layout_below="@+id/btn_chart"
-        tools:ignore="Orientation"></LinearLayout>
+       tools:ignore="Orientation"></LinearLayout>
 
 
 </RelativeLayout>

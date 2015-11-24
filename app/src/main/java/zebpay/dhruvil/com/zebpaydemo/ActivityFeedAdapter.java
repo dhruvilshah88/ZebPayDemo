@@ -41,6 +41,12 @@ public class ActivityFeedAdapter extends RecyclerView.Adapter<ActivityFeedAdapte
         imageLoader = ApplicationClass.getInstance().getimageloader();
     }
 
+    public void setdata(List<ActivityFeedPojo.ActivityFeedEntity> activityFeed) {
+        this.activityFeed = activityFeed;
+        notifyDataSetChanged();
+
+    }
+
     @Override
     public ActivityFeedAdapter.MyHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         if (inflater != null) {
