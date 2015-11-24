@@ -1,5 +1,6 @@
 package zebpay.dhruvil.com.zebpaydemo.utils;
 
+import com.crashlytics.android.Crashlytics;
 import com.evernote.android.job.Job;
 import com.evernote.android.job.JobCreator;
 import com.evernote.android.job.JobManager;
@@ -7,6 +8,8 @@ import com.nostra13.universalimageloader.cache.memory.impl.LruMemoryCache;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 import com.orm.SugarApp;
+
+import io.fabric.sdk.android.Fabric;
 
 /**
  * Created by dhruvil on 23/11/15.
@@ -22,6 +25,7 @@ public class ApplicationClass extends SugarApp {
     @Override
     public void onCreate() {
         super.onCreate();
+        Fabric.with(this, new Crashlytics());
         mInstance = this;
         JobManager.create(this, new MyJobCreator());
     }

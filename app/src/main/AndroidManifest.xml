@@ -37,6 +37,10 @@
         <activity android:name=".analytics" />
         <activity android:name=".Settings" >
         </activity>
+
+        <meta-data
+            android:name="io.fabric.ApiKey"
+            android:value="650bb60804705052cdf444d6921f5a8f48a07b5d" />
     </application>
 
 </manifest>
