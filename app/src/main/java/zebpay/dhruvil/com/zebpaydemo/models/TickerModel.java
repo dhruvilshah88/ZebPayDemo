@@ -17,13 +17,13 @@ public class TickerModel extends SugarRecord<TickerModel> {
     private double buy;
     private double sell;
     private String currency;
-    private double ctime = System.currentTimeMillis();
+    private long ctime = System.currentTimeMillis();
 
-    public double getCtime() {
+    public long getCtime() {
         return ctime;
     }
 
-    public void setCtime(double ctime) {
+    public void setCtime(long ctime) {
         this.ctime = ctime;
     }
 

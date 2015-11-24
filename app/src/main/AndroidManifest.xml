@@ -16,10 +16,18 @@
         android:theme="@style/AppTheme"
         tools:replace="android:icon">
 
-        <meta-data android:name="DATABASE" android:value="zebpay.db" />
-        <meta-data android:name="VERSION" android:value="1" />
-        <meta-data android:name="QUERY_LOG" android:value="true" />
-        <meta-data android:name="DOMAIN_PACKAGE_NAME" android:value="zebpay.dhruvil.com.zebpaydemo" />
+        <meta-data
+            android:name="DATABASE"
+            android:value="zebpay.db" />
+        <meta-data
+            android:name="VERSION"
+            android:value="1" />
+        <meta-data
+            android:name="QUERY_LOG"
+            android:value="true" />
+        <meta-data
+            android:name="DOMAIN_PACKAGE_NAME"
+            android:value="zebpay.dhruvil.com.zebpaydemo" />
 
         <activity android:name=".MainActivity">
             <intent-filter>
@@ -28,6 +36,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".analytics"></activity>
     </application>
 
 </manifest>
