@@ -1,5 +1,8 @@
 package zebpay.dhruvil.com.zebpaydemo.utils;
 
+import com.evernote.android.job.Job;
+import com.evernote.android.job.JobCreator;
+import com.evernote.android.job.JobManager;
 import com.nostra13.universalimageloader.cache.memory.impl.LruMemoryCache;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
@@ -9,18 +12,18 @@ import com.orm.SugarApp;
  * Created by dhruvil on 23/11/15.
  */
 public class ApplicationClass extends SugarApp {
-    private ImageLoader loader;
     private static ApplicationClass mInstance;
+    private ImageLoader loader;
+
+    public static synchronized ApplicationClass getInstance() {
+        return mInstance;
+    }
 
     @Override
     public void onCreate() {
         super.onCreate();
         mInstance = this;
-
-    }
-
-    public static synchronized ApplicationClass getInstance() {
-        return mInstance;
+        JobManager.create(this, new MyJobCreator());
     }
 
     public ImageLoader getimageloader() {
@@ -40,6 +43,21 @@ public class ApplicationClass extends SugarApp {
             loader = ImageLoader.getInstance();
         }
         return loader;
+    }
+
+    private static class MyJobCreator implements JobCreator {
+
+        @Override
+        public Job create(String tag) {
+            switch (tag) {
+
+                case TestJob.TAG:
+
+                    return new TestJob();
+                default:
+                    throw new RuntimeException("Cannot find job for tag " + tag);
+            }
+        }
     }
 
 }

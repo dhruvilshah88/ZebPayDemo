@@ -14,6 +14,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
+import com.evernote.android.job.JobManager;
+import com.evernote.android.job.JobRequest;
 import com.google.gson.Gson;
 import com.orm.SugarRecord;
 import com.squareup.okhttp.RequestBody;
@@ -28,18 +30,48 @@ import zebpay.dhruvil.com.zebpaydemo.models.ActivityFeedPojo;
 import zebpay.dhruvil.com.zebpaydemo.models.TickerModel;
 import zebpay.dhruvil.com.zebpaydemo.utils.CustomHttpClient;
 import zebpay.dhruvil.com.zebpaydemo.utils.RecyclerViewHeader;
+import zebpay.dhruvil.com.zebpaydemo.utils.TestJob;
 
 public class MainActivity extends AppCompatActivity {
+    private static final String LAST_JOB_ID = "LAST_JOB_ID";
     RecyclerViewHeader header;
     List<ActivityFeedPojo.ActivityFeedEntity> feeds;
     private RecyclerView recyclerViewFeeds;
     private ActivityFeedAdapter adapter;
     private TextView tvbuy, tvsell;
+    private JobManager mJobManager;
+    private int mLastJobId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        mJobManager = JobManager.instance();
+
+        if (savedInstanceState != null) {
+            mLastJobId = savedInstanceState.getInt(LAST_JOB_ID, 0);
+        }
+        if (mJobManager.getAllJobRequests().size() > 0) {
+            Log.w("abc", "not running");
+            if (mJobManager.getAllJobRequests().size() > 1) {
+                Log.w("abc", "cancelling");
+                mJobManager.cancelAll();
+                mLastJobId = new JobRequest.Builder(TestJob.TAG)
+                        .setPeriodic(60000L)
+                        .setRequiredNetworkType(JobRequest.NetworkType.CONNECTED)
+                        .setPersisted(true)
+                        .build()
+                        .schedule();
+            }
+        } else {
+            mLastJobId = new JobRequest.Builder(TestJob.TAG)
+                    .setPeriodic(60000L)
+                    .setRequiredNetworkType(JobRequest.NetworkType.CONNECTED)
+                    .setPersisted(true)
+                    .build()
+                    .schedule();
+        }
+
         recyclerViewFeeds = (RecyclerView) findViewById(R.id.recyclerViewfeeds);
         recyclerViewFeeds.setLayoutManager(new LinearLayoutManager(MainActivity.this));
         header = RecyclerViewHeader.fromXml(MainActivity.this, R.layout.header);
@@ -110,7 +142,7 @@ public class MainActivity extends AppCompatActivity {
         List<TickerModel> tickers = SugarRecord.findWithQuery(TickerModel.class, "Select max(buy), buy,sell from " + SugarRecord.getTableName(TickerModel.class) + " where ctime - " + timenow + "  <= ?", interval + "");
         TickerModel maxmbuy = tickers.get(0);
         Gson gson = new Gson();
-        Log.w("fields", " firlds=" + gson.toJson(maxmbuy) + " ..." + tickers.size());
+        //       Log.w("fields", " firlds=" + gson.toJson(maxmbuy) + " ..." + tickers.size());
 
         tickers = SugarRecord.findWithQuery(TickerModel.class, "Select min(buy), buy,sell from " + SugarRecord.getTableName(TickerModel.class) + " where ctime - " + timenow + "  <= ?", "600000");
         TickerModel minbuy = tickers.get(0);
@@ -118,7 +150,7 @@ public class MainActivity extends AppCompatActivity {
         DateFormat formatter = new SimpleDateFormat("HH:mm:ss:SSS");
         String dateFormatted = formatter.format(date);
 
-        Log.w("fields", "time:" + dateFormatted + " diff=" + (maxmbuy.getBuy() - minbuy.getBuy()) + " ..." + tickers.size());
+        //      Log.w("fields", "time:" + dateFormatted + " diff=" + (maxmbuy.getBuy() - minbuy.getBuy()) + " ..." + tickers.size());
 
     }
 
@@ -196,12 +228,12 @@ public class MainActivity extends AppCompatActivity {
 
             } else {
                 try {
-                    Log.w("res", s + ";");
+                    //       Log.w("res", s + ";");
                     Gson gson = new Gson();
                     TickerModel ticker = gson.fromJson(s, TickerModel.class);
                     tvbuy.setText(ticker.getBuy() + " ₹");
                     tvsell.setText(ticker.getSell() + " ₹");
-                    Log.w("time", ticker.getCtime() + ";");
+                    //     Log.w("time", ticker.getCtime() + ";");
                     ticker.save();
                 } catch (Exception e) {
                     e.printStackTrace();
