@@ -44,6 +44,16 @@
         android:text="Specify market variance"
         android:textSize="18sp" />
 
+    <TextView
+        android:id="@+id/currentvarience"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="20dp"
+        android:layout_marginTop="20dp"
+
+        android:text="Current variance is "
+        android:textSize="16sp" />
+
     <org.adw.library.widgets.discreteseekbar.DiscreteSeekBar
         android:id="@+id/seekbar"
         dsb_indicatorColor="@color/colorPrimary"
