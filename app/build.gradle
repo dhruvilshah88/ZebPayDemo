@@ -51,4 +51,5 @@ dependencies {
     compile('com.crashlytics.sdk.android:crashlytics:2.5.3@aar') {
         transitive = true;
     }
+    compile 'org.adw.library:discrete-seekbar:1.0.0'
 }

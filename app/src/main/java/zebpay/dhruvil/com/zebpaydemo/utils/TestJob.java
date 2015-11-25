@@ -1,5 +1,10 @@
 package zebpay.dhruvil.com.zebpaydemo.utils;
 
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.content.Context;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 import android.util.Log;
@@ -13,7 +18,10 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
+import zebpay.dhruvil.com.zebpaydemo.R;
+import zebpay.dhruvil.com.zebpaydemo.analytics;
 import zebpay.dhruvil.com.zebpaydemo.models.TickerModel;
+import zebpay.dhruvil.com.zebpaydemo.models.User;
 
 /**
  * Created by dhruvil on 25/11/15.
@@ -52,11 +60,44 @@ public class TestJob extends Job {
         Date date = new Date(minbuy.getCtime());
         DateFormat formatter = new SimpleDateFormat("HH:mm:ss:SSS");
         String dateFormatted = formatter.format(date);
+        int difference = (int) (maxmbuy.getBuy() - minbuy.getBuy());
+        Log.w("test job", "min:" + minbuy.getBuy() + " " + dateFormatted + " max:" + dateFormattedmax + " " + maxmbuy.getBuy() + " diff=" + (difference));
+        User user = ApplicationClass.getInstance().getsharedprefs();
+        if (user.isNotify()) {
+            if (user.getVariance() < difference) {
+                Log.w("test job", " sent user is " + user.getVariance() + " and diff is " + difference);
 
-        Log.w("fields", "min:" + minbuy.getBuy() + " " + dateFormatted + " max:" + dateFormattedmax + " " + maxmbuy.getBuy() + " diff=" + (maxmbuy.getBuy() - minbuy.getBuy()));
-
+                sendnotification(difference);
+            } else {
+                Log.w("test job", "user is " + user.getVariance() + " and diff is " + difference);
+            }
+        }
     }
 
+    void sendnotification(int change) {
+        // prepare intent which is triggered if the
+// notification is selected
+        Context context = ApplicationClass.getInstance();
+        Intent intent = new Intent(context, analytics.class);
+// use System.currentTimeMillis() to have a unique ID for the pending intent
+        PendingIntent pIntent = PendingIntent.getActivity(context, (int) System.currentTimeMillis(), intent, 0);
+
+// build notification
+// the addAction re-use the same intent to keep the example short
+        Notification n = new Notification.Builder(context)
+                .setContentTitle("ZebPay Price Change")
+                .setContentText("Variance Price " + change)
+                .setSmallIcon(R.drawable.ic_launcher)
+                .setContentIntent(pIntent)
+                .setAutoCancel(true)
+                .build();
+
+
+        NotificationManager notificationManager =
+                (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+
+        notificationManager.notify(0, n);
+    }
 
     class getticker extends AsyncTask<String, Void, String> {
         @Override

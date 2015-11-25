@@ -65,7 +65,9 @@ public class analytics extends Activity {
 
     private void openChart() {
         TickerModel ticker = new TickerModel();
-        List<TickerModel> tickers = SugarRecord.findWithQuery(TickerModel.class, "Select * from " + SugarRecord.getTableName(TickerModel.class) + " WHERE ctime > ? GROUP BY buy ORDER BY ctime DESC ", (System.currentTimeMillis() - 3600000) + "");
+        //   List<TickerModel> tickers = SugarRecord.findWithQuery(TickerModel.class, "Select * from " + SugarRecord.getTableName(TickerModel.class) + " WHERE ctime > ? GROUP BY buy ORDER BY ctime DESC ", (System.currentTimeMillis() - 3600000) + "");
+        List<TickerModel> tickers = SugarRecord.findWithQuery(TickerModel.class, "Select * from " + SugarRecord.getTableName(TickerModel.class) + " GROUP BY buy ORDER BY ctime DESC LIMIT 12");//, (System.currentTimeMillis() - 3600000) + "");
+
         int[] bitrates = new int[tickers.size()];
         timeprice = new String[tickers.size()];
         for (int j = 0; j < tickers.size(); j++) {

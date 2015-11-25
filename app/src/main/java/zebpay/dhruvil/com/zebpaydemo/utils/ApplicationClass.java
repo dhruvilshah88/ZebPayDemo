@@ -1,15 +1,19 @@
 package zebpay.dhruvil.com.zebpaydemo.utils;
 
+import android.content.SharedPreferences;
+
 import com.crashlytics.android.Crashlytics;
 import com.evernote.android.job.Job;
 import com.evernote.android.job.JobCreator;
 import com.evernote.android.job.JobManager;
+import com.google.gson.Gson;
 import com.nostra13.universalimageloader.cache.memory.impl.LruMemoryCache;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 import com.orm.SugarApp;
 
 import io.fabric.sdk.android.Fabric;
+import zebpay.dhruvil.com.zebpaydemo.models.User;
 
 /**
  * Created by dhruvil on 23/11/15.
@@ -28,6 +32,29 @@ public class ApplicationClass extends SugarApp {
         Fabric.with(this, new Crashlytics());
         mInstance = this;
         JobManager.create(this, new MyJobCreator());
+    }
+
+    public User getsharedprefs() {
+        Gson gson = new Gson();
+        SharedPreferences sp = getSharedPreferences("user", MODE_PRIVATE);
+        String userpojostring = sp.getString("pojo", "error");
+        if (userpojostring.equals("error")) {
+            return new User();
+        }
+        User user = gson.fromJson(userpojostring, User.class);
+
+        return user;
+    }
+
+    public void setsharedprefs(User user) {
+        Gson gson = new Gson();
+        String userpojostring = gson.toJson(user);
+        SharedPreferences sp = getSharedPreferences("user", MODE_PRIVATE);
+        SharedPreferences.Editor edit = sp.edit();
+
+        edit.putString("pojo", userpojostring);
+        edit.commit();
+
     }
 
     public ImageLoader getimageloader() {
