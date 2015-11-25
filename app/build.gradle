@@ -39,10 +39,8 @@ dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
     testCompile 'junit:junit:4.12'
     compile 'com.android.support:appcompat-v7:23.1.0'
-    compile 'com.github.satyan:sugar:1.3'
     compile 'com.google.code.gson:gson:2.3'
     compile 'com.android.support:recyclerview-v7:23.1.0'
-    compile 'com.android.support:cardview-v7:23.1.0'
     compile 'com.squareup.okhttp:okhttp:2.4.0'
     compile files('libs/universal-image-loader-1.9.3-with-sources.jar')
     compile 'com.github.satyan:sugar:1.3'
@@ -52,4 +50,5 @@ dependencies {
         transitive = true;
     }
     compile 'org.adw.library:discrete-seekbar:1.0.0'
+    compile 'com.skyfishjy.ripplebackground:library:1.0.1'
 }

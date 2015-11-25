@@ -4,9 +4,9 @@ import android.app.Activity;
 import android.graphics.Paint.Align;
 import android.graphics.Typeface;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.LinearLayout;
+import android.widget.Toast;
 
 import com.orm.SugarRecord;
 
@@ -20,7 +20,6 @@ import org.achartengine.renderer.XYSeriesRenderer;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -52,16 +51,7 @@ public class analytics extends Activity {
             e.printStackTrace();
         }
 
-        Calendar cal = Calendar.getInstance();
 
-        pYear = cal.get(Calendar.YEAR);
-
-        pDay = cal.get(Calendar.DAY_OF_MONTH);
-
-        pMonth = cal.get(Calendar.MONTH);
-
-        int dayOfWeek = cal.get(Calendar.DAY_OF_WEEK);
-        Log.w("main", "day is:" + dayOfWeek);
         try {
             openChart();
         } catch (Exception e) {
@@ -90,6 +80,10 @@ public class analytics extends Activity {
 
         int maxy = findmax(bitrates);
         int miny = findmin(bitrates);
+        if (bitrates.length < 2) {
+            Toast.makeText(analytics.this, "Not enought entries to make a chart", Toast.LENGTH_SHORT).show();
+
+        }
         // Creating an XYSeries for bitrates
         XYSeries bitratesSeries = new XYSeries("Rates Latest");
         // Creating an XYSeries for Expense

@@ -13,7 +13,6 @@ import com.evernote.android.job.Job;
 import com.google.gson.Gson;
 import com.orm.SugarRecord;
 
-import java.util.Date;
 import java.util.List;
 
 import zebpay.dhruvil.com.zebpaydemo.R;
@@ -48,16 +47,11 @@ public class TestJob extends Job {
 
     void getdifference() {
         long timenow = System.currentTimeMillis();
-        TickerModel ticker = new TickerModel();
         List<TickerModel> tickers = SugarRecord.findWithQuery(TickerModel.class, "Select max(buy), buy,sell,ctime from " + SugarRecord.getTableName(TickerModel.class) + " WHERE ctime > ? ", (timenow - 3600000) + "");
         TickerModel maxmbuy = tickers.get(0);
-        Date datemax = new Date(maxmbuy.getCtime());
-        // Gson gson = new Gson();
-        //       Log.w("fields", " firlds=" + gson.toJson(maxmbuy) + " ..." + tickers.size());
 
         tickers = SugarRecord.findWithQuery(TickerModel.class, "Select min(buy), buy,sell,ctime from " + SugarRecord.getTableName(TickerModel.class) + " WHERE ctime > ? ", (timenow - 3600000) + "");
         TickerModel minbuy = tickers.get(0);
-        Date date = new Date(minbuy.getCtime());
         int difference = (int) (maxmbuy.getBuy() - minbuy.getBuy());
         User user = ApplicationClass.getInstance().getsharedprefs();
 
@@ -87,11 +81,8 @@ public class TestJob extends Job {
 
     void getdifferencesell() {
         long timenow = System.currentTimeMillis();
-        TickerModel ticker = new TickerModel();
         List<TickerModel> tickers = SugarRecord.findWithQuery(TickerModel.class, "Select max(sell), buy,sell,ctime from " + SugarRecord.getTableName(TickerModel.class) + " WHERE ctime > ? ", (timenow - 3600000) + "");
         TickerModel maxmsell = tickers.get(0);
-        // Gson gson = new Gson();
-        //       Log.w("fields", " firlds=" + gson.toJson(maxmbuy) + " ..." + tickers.size());
 
         tickers = SugarRecord.findWithQuery(TickerModel.class, "Select min(sell), buy,sell,ctime from " + SugarRecord.getTableName(TickerModel.class) + " WHERE ctime > ? ", (timenow - 3600000) + "");
         TickerModel minsell = tickers.get(0);
@@ -160,10 +151,8 @@ public class TestJob extends Job {
 
             } else {
                 try {
-                    //       Log.w("res", s + ";");
                     Gson gson = new Gson();
                     TickerModel ticker = gson.fromJson(s, TickerModel.class);
-                    //     Log.w("time", ticker.getCtime() + ";");
                     ticker.save();
                     getdifference();
                 } catch (Exception e) {
