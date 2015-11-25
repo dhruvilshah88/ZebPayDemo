@@ -57,7 +57,7 @@ public class MainActivity extends AppCompatActivity {
                 Log.w("abc", "cancelling");
                 mJobManager.cancelAll();
                 mLastJobId = new JobRequest.Builder(TestJob.TAG)
-                        .setPeriodic(60000L)
+                        .setPeriodic(600000L)
                         .setRequiredNetworkType(JobRequest.NetworkType.CONNECTED)
                         .setPersisted(true)
 
@@ -66,7 +66,7 @@ public class MainActivity extends AppCompatActivity {
             }
         } else {
             mLastJobId = new JobRequest.Builder(TestJob.TAG)
-                    .setPeriodic(60000L)
+                    .setPeriodic(600000L)
                     .setRequiredNetworkType(JobRequest.NetworkType.CONNECTED)
                     .setPersisted(true)
                     .build()
