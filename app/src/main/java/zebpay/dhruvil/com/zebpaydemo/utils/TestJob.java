@@ -112,7 +112,7 @@ public class TestJob extends Job {
 
         Notification n = new Notification.Builder(context)
                 .setContentTitle("ZebPay Price Change")
-                .setContentText("Variance Price " + change)
+                .setContentText("Price change of Rs " + change)
                 .setSmallIcon(R.drawable.ic_launcher)
                 .setContentIntent(pIntent)
                 .setAutoCancel(true)
