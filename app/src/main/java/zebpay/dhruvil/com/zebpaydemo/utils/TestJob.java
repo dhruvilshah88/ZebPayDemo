@@ -79,15 +79,11 @@ public class TestJob extends Job {
     }
 
     void sendnotification(int change) {
-        // prepare intent which is triggered if the
-// notification is selected
+
         Context context = ApplicationClass.getInstance();
         Intent intent = new Intent(context, analytics.class);
-// use System.currentTimeMillis() to have a unique ID for the pending intent
         PendingIntent pIntent = PendingIntent.getActivity(context, (int) System.currentTimeMillis(), intent, 0);
 
-// build notification
-// the addAction re-use the same intent to keep the example short
         Notification n = new Notification.Builder(context)
                 .setContentTitle("ZebPay Price Change")
                 .setContentText("Variance Price " + change)
