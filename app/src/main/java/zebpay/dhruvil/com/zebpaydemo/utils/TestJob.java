@@ -63,13 +63,17 @@ public class TestJob extends Job {
         int difference = (int) (maxmbuy.getBuy() - minbuy.getBuy());
         Log.w("test job", "min:" + minbuy.getBuy() + " " + dateFormatted + " max:" + dateFormattedmax + " " + maxmbuy.getBuy() + " diff=" + (difference));
         User user = ApplicationClass.getInstance().getsharedprefs();
+
         if (user.isNotify()) {
-            if (user.getVariance() < difference) {
+            if (user.getVariance() < difference && user.getLastdifference() != difference) {
+
                 Log.w("test job", " sent user is " + user.getVariance() + " and diff is " + difference);
 
+                user.setLastdifference(difference);
+                ApplicationClass.getInstance().setsharedprefs(user);
                 sendnotification(difference);
             } else {
-                Log.w("test job", "user is " + user.getVariance() + " and diff is " + difference);
+                Log.w("test job", "user is " + user.getVariance() + " and diff is " + difference + " and last is " + user.getLastdifference());
             }
         }
     }

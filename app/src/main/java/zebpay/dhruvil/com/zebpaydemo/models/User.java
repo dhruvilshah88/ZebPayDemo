@@ -7,6 +7,15 @@ public class User {
     long lastupdated = 0;
     boolean notify = true;
     int variance = 100;
+    int lastdifference = 0;
+
+    public int getLastdifference() {
+        return lastdifference;
+    }
+
+    public void setLastdifference(int lastdifference) {
+        this.lastdifference = lastdifference;
+    }
 
     public long getLastupdated() {
         return lastupdated;
