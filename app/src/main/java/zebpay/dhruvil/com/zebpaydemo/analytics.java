@@ -34,6 +34,7 @@ public class analytics extends Activity {
     private int pYear;
     private int pMonth;
     private int pDay;
+    private String type = "buy";
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -45,6 +46,11 @@ public class analytics extends Activity {
 
         // Setting event click listener for the button btn_chart of the
         // MainActivity layout
+        try {
+            type = getIntent().getExtras().getString("type", "buy");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
         Calendar cal = Calendar.getInstance();
 
@@ -66,14 +72,22 @@ public class analytics extends Activity {
     private void openChart() {
         TickerModel ticker = new TickerModel();
         //   List<TickerModel> tickers = SugarRecord.findWithQuery(TickerModel.class, "Select * from " + SugarRecord.getTableName(TickerModel.class) + " WHERE ctime > ? GROUP BY buy ORDER BY ctime DESC ", (System.currentTimeMillis() - 3600000) + "");
-        List<TickerModel> tickers = SugarRecord.findWithQuery(TickerModel.class, "Select * from " + SugarRecord.getTableName(TickerModel.class) + " GROUP BY buy ORDER BY ctime DESC LIMIT 12");//, (System.currentTimeMillis() - 3600000) + "");
+        List<TickerModel> tickers = SugarRecord.findWithQuery(TickerModel.class, "Select * from " + SugarRecord.getTableName(TickerModel.class) + " GROUP BY " + type + " ORDER BY ctime DESC LIMIT 12");//, (System.currentTimeMillis() - 3600000) + "");
 
         int[] bitrates = new int[tickers.size()];
         timeprice = new String[tickers.size()];
-        for (int j = 0; j < tickers.size(); j++) {
-            bitrates[j] = (int) tickers.get(j).getBuy();
-            timeprice[j] = getformateddate(tickers.get(j).getCtime());
+        if (type.equals("buy")) {
+            for (int j = 0; j < tickers.size(); j++) {
+                bitrates[j] = (int) tickers.get(j).getBuy();
+                timeprice[j] = getformateddate(tickers.get(j).getCtime());
+            }
+        } else {
+            for (int j = 0; j < tickers.size(); j++) {
+                bitrates[j] = (int) tickers.get(j).getSell();
+                timeprice[j] = getformateddate(tickers.get(j).getCtime());
+            }
         }
+
         int maxy = findmax(bitrates);
         int miny = findmin(bitrates);
         // Creating an XYSeries for bitrates
@@ -111,9 +125,9 @@ public class analytics extends Activity {
         // Creating a XYMultipleSeriesRenderer to customize the whole chart
         XYMultipleSeriesRenderer multiRenderer = new XYMultipleSeriesRenderer();
         multiRenderer.setXLabels(0);
-        multiRenderer.setChartTitle("");
+        multiRenderer.setChartTitle(type.toUpperCase());
         multiRenderer.setXTitle("Time");
-        multiRenderer.setYTitle("Buy Rates");
+        multiRenderer.setYTitle(type.toUpperCase() + " Rates");
         // multiRenderer.setAxesColor(color.available);
         /***
          * Customizing graphs

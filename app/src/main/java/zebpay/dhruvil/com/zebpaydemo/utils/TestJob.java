@@ -35,8 +35,12 @@ public class TestJob extends Job {
     protected Result onRunJob(final Params params) {
 
         Log.w(TAG, TAG + " " + System.currentTimeMillis());
-        new getticker().execute();
+        try {
+            new getticker().execute();
 
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         if (isCanceled()) {
             return params.isPeriodic() ? Result.FAILURE : Result.RESCHEDULE;
         } else {
@@ -50,38 +54,73 @@ public class TestJob extends Job {
         List<TickerModel> tickers = SugarRecord.findWithQuery(TickerModel.class, "Select max(buy), buy,sell,ctime from " + SugarRecord.getTableName(TickerModel.class) + " WHERE ctime > ? ", (timenow - 3600000) + "");
         TickerModel maxmbuy = tickers.get(0);
         Date datemax = new Date(maxmbuy.getCtime());
-        DateFormat formattermax = new SimpleDateFormat("HH:mm:ss:SSS");
-        String dateFormattedmax = formattermax.format(datemax);
         // Gson gson = new Gson();
         //       Log.w("fields", " firlds=" + gson.toJson(maxmbuy) + " ..." + tickers.size());
 
         tickers = SugarRecord.findWithQuery(TickerModel.class, "Select min(buy), buy,sell,ctime from " + SugarRecord.getTableName(TickerModel.class) + " WHERE ctime > ? ", (timenow - 3600000) + "");
         TickerModel minbuy = tickers.get(0);
         Date date = new Date(minbuy.getCtime());
-        DateFormat formatter = new SimpleDateFormat("HH:mm:ss:SSS");
-        String dateFormatted = formatter.format(date);
         int difference = (int) (maxmbuy.getBuy() - minbuy.getBuy());
-        Log.w("test job", "min:" + minbuy.getBuy() + " " + dateFormatted + " max:" + dateFormattedmax + " " + maxmbuy.getBuy() + " diff=" + (difference));
+        Log.w("test job", "min:" + minbuy.getBuy() + "   " + maxmbuy.getBuy() + " diff=" + (difference));
         User user = ApplicationClass.getInstance().getsharedprefs();
 
         if (user.isNotify()) {
-            if (user.getVariance() < difference && user.getLastdifference() != difference) {
+
+            //check if new differnece is not very close to last value
+            if (user.getVariance() < difference && isinrange(difference, user.getLastdifferencebuy() - user.getVariance(), user.getLastdifferencebuy() + user.getVariance())) {
 
                 Log.w("test job", " sent user is " + user.getVariance() + " and diff is " + difference);
 
-                user.setLastdifference(difference);
+                user.setLastdifferencebuy(difference);
                 ApplicationClass.getInstance().setsharedprefs(user);
-                sendnotification(difference);
+                sendnotification(difference, "buy");
             } else {
-                Log.w("test job", "user is " + user.getVariance() + " and diff is " + difference + " and last is " + user.getLastdifference());
+                Log.w("test job", "user is " + user.getVariance() + " and diff is " + difference + " and last is " + user.getLastdifferencebuy());
+            }
+        }
+        getdifferencesell();
+    }
+
+    boolean isinrange(int value, int min, int max) {
+        return value > min && value < max;
+    }
+
+    void getdifferencesell() {
+        long timenow = System.currentTimeMillis();
+        TickerModel ticker = new TickerModel();
+        List<TickerModel> tickers = SugarRecord.findWithQuery(TickerModel.class, "Select max(sell), buy,sell,ctime from " + SugarRecord.getTableName(TickerModel.class) + " WHERE ctime > ? ", (timenow - 3600000) + "");
+        TickerModel maxmsell = tickers.get(0);
+        // Gson gson = new Gson();
+        //       Log.w("fields", " firlds=" + gson.toJson(maxmbuy) + " ..." + tickers.size());
+
+        tickers = SugarRecord.findWithQuery(TickerModel.class, "Select min(sell), buy,sell,ctime from " + SugarRecord.getTableName(TickerModel.class) + " WHERE ctime > ? ", (timenow - 3600000) + "");
+        TickerModel minsell = tickers.get(0);
+        Date date = new Date(minsell.getCtime());
+        DateFormat formatter = new SimpleDateFormat("HH:mm:ss:SSS");
+        String dateFormatted = formatter.format(date);
+        int difference = (int) (maxmsell.getSell() - minsell.getSell());
+        Log.w("test job", "min:" + minsell.getSell() + "  " + maxmsell.getSell() + " diff=" + (difference));
+        User user = ApplicationClass.getInstance().getsharedprefs();
+
+        if (user.isNotify()) {
+            if (user.getVariance() < difference && isinrange(difference, user.getLastdifferencesell() - user.getVariance(), user.getLastdifferencesell() + user.getVariance())) {
+
+                Log.w("test job", " sent user is " + user.getVariance() + " and diff is " + difference);
+
+                user.setLastdifferencesell(difference);
+                ApplicationClass.getInstance().setsharedprefs(user);
+                sendnotification(difference, "sell");
+            } else {
+                Log.w("test job", "user is " + user.getVariance() + " and diff is " + difference + " and last is " + user.getLastdifferencesell());
             }
         }
     }
 
-    void sendnotification(int change) {
+    void sendnotification(int change, String buysell) {
 
         Context context = ApplicationClass.getInstance();
         Intent intent = new Intent(context, analytics.class);
+        intent.putExtra("type", buysell);
         PendingIntent pIntent = PendingIntent.getActivity(context, (int) System.currentTimeMillis(), intent, 0);
 
         Notification n = new Notification.Builder(context)

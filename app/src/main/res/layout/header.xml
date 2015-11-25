@@ -40,6 +40,16 @@
 
         android:textSize="20sp" />
 
+    <Button
+        android:id="@+id/buychart"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_alignParentRight="true"
+        android:background="@drawable/charticon"
+
+        android:padding="1dp"
+        android:textColor="@color/White" />
+
     <TextView
         android:id="@+id/tvsell"
         android:layout_width="fill_parent"
@@ -53,4 +63,14 @@
         android:textColor="@color/colorAccent"
         android:textSize="30sp" />
 
+    <Button
+        android:id="@+id/sellchart"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_alignParentRight="true"
+        android:layout_alignRight="@+id/tvsell"
+        android:layout_alignTop="@+id/tvsell"
+        android:background="@drawable/charticon"
+        android:padding="1dp"
+        android:textColor="@color/White" />
 </RelativeLayout>

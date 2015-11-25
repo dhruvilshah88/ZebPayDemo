@@ -7,14 +7,23 @@ public class User {
     long lastupdated = 0;
     boolean notify = true;
     int variance = 100;
-    int lastdifference = 0;
+    int lastdifferencebuy = 0;
+    int lastdifferencesell = 0;
 
-    public int getLastdifference() {
-        return lastdifference;
+    public int getLastdifferencebuy() {
+        return lastdifferencebuy;
     }
 
-    public void setLastdifference(int lastdifference) {
-        this.lastdifference = lastdifference;
+    public void setLastdifferencebuy(int lastdifferencebuy) {
+        this.lastdifferencebuy = lastdifferencebuy;
+    }
+
+    public int getLastdifferencesell() {
+        return lastdifferencesell;
+    }
+
+    public void setLastdifferencesell(int lastdifferencesell) {
+        this.lastdifferencesell = lastdifferencesell;
     }
 
     public long getLastupdated() {

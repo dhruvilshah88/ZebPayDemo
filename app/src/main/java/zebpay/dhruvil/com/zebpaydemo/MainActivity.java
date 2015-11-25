@@ -17,13 +17,9 @@ import android.widget.TextView;
 import com.evernote.android.job.JobManager;
 import com.evernote.android.job.JobRequest;
 import com.google.gson.Gson;
-import com.orm.SugarRecord;
 import com.squareup.okhttp.RequestBody;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import zebpay.dhruvil.com.zebpaydemo.models.ActivityFeedPojo;
@@ -77,11 +73,20 @@ public class MainActivity extends AppCompatActivity {
         recyclerViewFeeds.setLayoutManager(new LinearLayoutManager(MainActivity.this));
         header = RecyclerViewHeader.fromXml(MainActivity.this, R.layout.header);
         header.attachTo(recyclerViewFeeds);
-        header.setOnClickListener(new View.OnClickListener() {
+        header.findViewById(R.id.buychart).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-                startActivity(new Intent(MainActivity.this, analytics.class));
+                Intent intent = new Intent(MainActivity.this, analytics.class);
+                intent.putExtra("type", "buy");
+                startActivity(intent);
+            }
+        });
+        header.findViewById(R.id.sellchart).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, analytics.class);
+                intent.putExtra("type", "sell");
+                startActivity(intent);
             }
         });
 
@@ -95,18 +100,6 @@ public class MainActivity extends AppCompatActivity {
         new getticker().execute();
     }
 
-    void refresh() {
-        header.attachTo(recyclerViewFeeds);
-        header.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                startActivity(new Intent(MainActivity.this, analytics.class));
-            }
-        });
-        new gethomefeed().execute();
-        new getticker().execute();
-    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -136,24 +129,6 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    void getdifference() {
-        long timenow = System.currentTimeMillis();
-        long interval = 600000;
-        TickerModel ticker = new TickerModel();
-        List<TickerModel> tickers = SugarRecord.findWithQuery(TickerModel.class, "Select max(buy), buy,sell from " + SugarRecord.getTableName(TickerModel.class) + " where ctime - " + timenow + "  <= ?", interval + "");
-        TickerModel maxmbuy = tickers.get(0);
-        Gson gson = new Gson();
-        //       Log.w("fields", " firlds=" + gson.toJson(maxmbuy) + " ..." + tickers.size());
-
-        tickers = SugarRecord.findWithQuery(TickerModel.class, "Select min(buy), buy,sell from " + SugarRecord.getTableName(TickerModel.class) + " where ctime - " + timenow + "  <= ?", "600000");
-        TickerModel minbuy = tickers.get(0);
-        Date date = new Date(minbuy.getCtime());
-        DateFormat formatter = new SimpleDateFormat("HH:mm:ss:SSS");
-        String dateFormatted = formatter.format(date);
-
-        //      Log.w("fields", "time:" + dateFormatted + " diff=" + (maxmbuy.getBuy() - minbuy.getBuy()) + " ..." + tickers.size());
-
-    }
 
     class gethomefeed extends AsyncTask<RequestBody, Void, String> {
         ProgressDialog pd;
