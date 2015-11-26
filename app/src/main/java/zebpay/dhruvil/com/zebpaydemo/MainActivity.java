@@ -204,7 +204,7 @@ public class MainActivity extends AppCompatActivity {
 
             } else {
                 try {
-                    //       Log.w("res", s + ";");
+                    Log.w("res", s + ";");
                     Gson gson = new Gson();
                     TickerModel ticker = gson.fromJson(s, TickerModel.class);
                     tvbuy.setText(ticker.getBuy() + " ₹");
